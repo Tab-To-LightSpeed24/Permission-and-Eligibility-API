@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background-color: #1f1f1f;
+            padding: 1em 0;
+            text-align: center;
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 1em;
+        }
+
+        nav a {
+            color: #fff;
+            padding: 0.8em 2em;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 2em auto;
+            padding: 2em;
+            background-color: #1c1c1c;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5em;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8em;
+            margin-top: 0.5em;
+            background-color: #2c2c2c;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .status {
+            margin-top: 1em;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        .status.success {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .status.error {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 2em;
+        }
+
+        .search-bar input[type="text"] {
+            width: 60%;
+            padding: 1em;
+            background-color: #2c2c2c;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .search-bar input[type="submit"] {
+            padding: 1em 2em;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .search-bar input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        VIT Portal
+    </header>
+    <nav>
+        <a href="#checkScholarship">Check Scholarship</a>
+        <a href="#checkExamPermission">Check Exam Permission</a>
+    </nav>
+
+    <div class="container" id="checkScholarship">
+        <h2>Search Student Information</h2>
+        <form id="searchForm">
+            <div class="search-bar">
+                <input type="text" id="studentId" name="studentId" placeholder="Enter Student ID" required>
+                <input type="submit" value="Search">
+            </div>
+        </form>
+        <div id="statusMessage" class="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let studentId = document.getElementById('studentId').value;
+
+            Promise.all([
+                fetch(`http://localhost:8080/check_scholarship?id=${studentId}`).then(response => response.json()),
+                fetch(`http://localhost:8080/check_exam_permission?id=${studentId}`).then(response => response.json())
+            ])
+            .then(([scholarshipData, examData]) => {
+                let statusDiv = document.getElementById('statusMessage');
+                if (scholarshipData.status === 'Eligible') {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `Scholarship: Eligible<br>`;
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `Scholarship: Not Eligible<br>`;
+                }
+
+                if (examData.status === 'Permitted') {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML += `Exam Permission: Permitted`;
+                } else if (examData.status === 'Not Permitted') {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML += `Exam Permission: Not Permitted`;
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML += `Student not found.`;
+                }
+            })
+            .catch(error => {
+                let statusDiv = document.getElementById('statusMessage');
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = 'Error: Unable to fetch data.';
+            });
+        });
+    </script>
+</body>
+</html>
