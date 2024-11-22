@@ -7,14 +7,12 @@
 This repository contains a simple API built using Prolog and Python to perform inference on a Bayesian Belief Network (BBN) and check eligibility statuses for a student portal system. The API provides endpoints for checking **exam permission** and **scholarship eligibility** based on student data, with Monte Carlo simulation implemented to calculate conditional probabilities.
 
 **Features:**
-- Perform Bayesian inference using Monte Carlo simulation for decision-making.
 - Check **exam permission** based on student attendance.
 - Check **scholarship eligibility** based on CGPA and attendance.
 - Simple frontend interface to interact with the API.
   
 **Technologies Used:**
 - Prolog for logic-based inference and data handling.
-- Python for the Monte Carlo simulation and API handling.
 - HTML for the frontend interface.
 
 ---
