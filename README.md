@@ -19,3 +19,4 @@ This repository contains a simple API built using Prolog and Python to perform i
 
 ---
 
+![image](https://github.com/user-attachments/assets/7a974709-baf1-480f-b566-cdfaeed90e37)
